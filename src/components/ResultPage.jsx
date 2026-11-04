@@ -1,4 +1,5 @@
 import React from 'react';
+import { CheckCircle, XCircle, Lightbulb } from 'lucide-react';
 import './ResultPage.css';
 
 export default function ResultPage({ finalResult, onRestart }) {
@@ -7,7 +8,7 @@ export default function ResultPage({ finalResult, onRestart }) {
   return (
     <div className="result-container">
       <div className="result-card">
-        <h1 className="result-title">Hasil Interview</h1>
+        <h1 className="result-title">Hasil Evaluasi</h1>
         <div className="score-circle">
           <span className="score-number">{score}</span>
           <span className="score-label">/ 100</span>
@@ -15,15 +16,15 @@ export default function ResultPage({ finalResult, onRestart }) {
 
         <div className="analysis-grid">
           <div className="analysis-card">
-            <h3>✅ Kelebihan</h3>
+            <h3><CheckCircle size={20} color="green" /> Kelebihan</h3>
             <ul>{strengths.map((s, i) => <li key={i}>{s}</li>)}</ul>
           </div>
           <div className="analysis-card">
-            <h3>❌ Kekurangan</h3>
+            <h3><XCircle size={20} color="red" /> Kekurangan</h3>
             <ul>{weaknesses.map((w, i) => <li key={i}>{w}</li>)}</ul>
           </div>
           <div className="analysis-card full-width">
-            <h3>💡 Rekomendasi</h3>
+            <h3><Lightbulb size={20} color="gold" /> Rekomendasi</h3>
             <ul>{recommendations.map((r, i) => <li key={i}>{r}</li>)}</ul>
           </div>
         </div>

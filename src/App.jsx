@@ -43,7 +43,12 @@ function App() {
   const handleStartInterview = (data) => {
     setUserData(data);
     setPage('interview');
-    const greeting = `Halo ${data.name}, terima kasih sudah meluangkan waktu. Saya AI HRD dari perusahaan. Mari kita mulai sesi wawancara untuk posisi ${data.position}. Silakan ceritakan tentang diri Anda.`;
+    const greetings = [
+      `Halo ${data.name}, mari kita mulai wawancara untuk posisi ${data.position}. Ceritakan pengalaman Anda.`,
+      `Selamat datang ${data.name}. Mari bahas posisi ${data.position}. Silakan perkenalkan latar belakang Anda.`,
+      `Halo ${data.name}, silakan mulai perkenalan untuk posisi ${data.position}.`
+    ];
+    const greeting = greetings[Math.floor(Math.random() * greetings.length)];
     setCurrentQuestion(greeting);
     setChatHistory([{ sender: 'assistant', message: greeting }]);
   };
