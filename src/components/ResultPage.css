@@ -1,0 +1,83 @@
+:root {
+  --bg-color: oklch(99% 0.005 240);
+  --text-main: oklch(15% 0.01 240);
+  --border: oklch(90% 0.01 240);
+}
+
+.result-container {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  padding: 80px 20px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-main);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.result-card {
+  padding: 4rem;
+  border: 1px solid var(--border);
+  background: white;
+}
+
+.result-title {
+  font-family: 'Times New Roman', serif;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-weight: 400;
+}
+
+.score-circle {
+  width: 120px;
+  height: 120px;
+  border: 1px solid var(--text-main);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 3rem;
+}
+
+.score-number {
+  font-size: 2.5rem;
+  font-weight: 300;
+}
+
+.analysis-grid {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.analysis-card {
+  padding: 0;
+}
+
+.card-header {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: oklch(50% 0.01 240);
+  margin-bottom: 1rem;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 4rem;
+}
+
+.btn {
+  padding: 1rem 2rem;
+  border: 1px solid var(--text-main);
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn:hover {
+  background: var(--text-main);
+  color: white;
+}
