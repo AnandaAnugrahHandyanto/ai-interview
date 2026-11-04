@@ -24,9 +24,18 @@ export default function InterviewSession({ currentQuestion, onSendAnswer, isSpea
   }, [currentQuestion]);
 
   useEffect(() => {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-      if (videoRef.current) videoRef.current.srcObject = stream;
-    }).catch(err => console.error("Webcam access denied:", err));
+    const startCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play();
+        }
+      } catch (err) {
+        console.error("Webcam access denied:", err);
+      }
+    };
+    startCamera();
   }, []);
 
   const startRecording = async () => {
@@ -62,22 +71,22 @@ export default function InterviewSession({ currentQuestion, onSendAnswer, isSpea
   };
 
   return (
-    <div className="meeting-layout">
-      <main className="main-stage">
-        <AIHRD isSpeaking={isSpeaking} />
-        <div className="caption-box">{cleanText(currentQuestion)}</div>
-      </main>
-
-      <aside className="sidebar">
-        <div className="user-video">
-          <video ref={videoRef} autoPlay muted playsInline />
-          <div className="user-overlay">
-            <User size={14} /> {userName}
+    <div className="interview-container">
+      <div className="meeting-body">
+        <main className="main-stage">
+          <AIHRD isSpeaking={isSpeaking} />
+          <div className="caption-box">{cleanText(currentQuestion)}</div>
+        </main>
+        <aside className="sidebar">
+          <div className="user-video">
+            <video ref={videoRef} autoPlay muted playsInline />
+            <div className="user-overlay">
+              <User size={14} /> {userName}
+            </div>
+            {isRecording && <div className="rec-indicator" />}
           </div>
-          {isRecording && <div className="rec-indicator" />}
-        </div>
-      </aside>
-
+        </aside>
+      </div>
       <footer className="control-bar">
         <button className={`mic-btn ${isRecording ? 'recording' : ''}`} onClick={isRecording ? stopRecording : startRecording}>
           {isRecording ? <MicOff size={24} color="white" /> : <Mic size={24} color="white" />}
