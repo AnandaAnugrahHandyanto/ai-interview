@@ -32,6 +32,8 @@ export default function FormInput({ onStart }) {
               <option value="">Pilih Posisi</option>
               <option value="Web Developer">Web Developer</option>
               <option value="UI/UX Designer">UI/UX Designer</option>
+              <option value="Business Analyst">Business Analyst</option>
+              <option value="System Analyst">System Analyst</option>
               <option value="Data Scientist">Data Scientist</option>
               <option value="QA Tester">QA Tester</option>
             </select>
