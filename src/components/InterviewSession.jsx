@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import AIHRD from '../AIHRD';
 import { Mic, MicOff, PhoneOff, User } from 'lucide-react';
 import './InterviewSession.css';
-import { GROQ_API_TRANSCRIPTION_ENDPOINT, GROQ_TRANSCRIPTION_MODEL } from '../constants';
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
@@ -39,6 +38,7 @@ export default function InterviewSession({ currentQuestion, onSendAnswer, isSpea
   }, []);
 
   const startRecording = async () => {
+    console.log("Merekam dimulai...");
     window.speechSynthesis.cancel();
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     mediaRecorderRef.current = new MediaRecorder(stream);
@@ -60,13 +60,14 @@ export default function InterviewSession({ currentQuestion, onSendAnswer, isSpea
   const transcribeAudio = async (audioFile) => {
     const formData = new FormData();
     formData.append('file', audioFile);
-    formData.append('model', GROQ_TRANSCRIPTION_MODEL);
-    const response = await fetch(GROQ_API_TRANSCRIPTION_ENDPOINT, {
+    formData.append('model', 'whisper-large-v3-turbo');
+    const response = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${GROQ_API_KEY}` },
       body: formData,
     });
     const data = await response.json();
+    console.log("Transkripsi:", data.text);
     if (data.text) onSendAnswer(data.text);
   };
 
@@ -75,7 +76,7 @@ export default function InterviewSession({ currentQuestion, onSendAnswer, isSpea
       <div className="meeting-body">
         <main className="main-stage">
           <AIHRD isSpeaking={isSpeaking} />
-          <div className="caption-box">{cleanText(currentQuestion)}</div>
+          <div className="subtitle-bar">{cleanText(currentQuestion)}</div>
         </main>
         <aside className="sidebar">
           <div className="user-video">
@@ -83,18 +84,19 @@ export default function InterviewSession({ currentQuestion, onSendAnswer, isSpea
             <div className="user-overlay">
               <User size={14} /> {userName}
             </div>
+            <div className="live-badge"><span className="pulse-dot"></span> LIVE</div>
             {isRecording && <div className="rec-indicator" />}
           </div>
         </aside>
       </div>
-      <footer className="control-bar">
+      <div className="control-bar">
         <button className={`mic-btn ${isRecording ? 'recording' : ''}`} onClick={isRecording ? stopRecording : startRecording}>
           {isRecording ? <MicOff size={24} color="white" /> : <Mic size={24} color="white" />}
         </button>
         <button className="end-btn" onClick={onEndInterview}>
           <PhoneOff size={24} color="white" />
         </button>
-      </footer>
+      </div>
     </div>
   );
 }
