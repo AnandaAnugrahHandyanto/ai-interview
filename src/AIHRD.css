@@ -1,0 +1,421 @@
+/* ==========================================================================
+   AI HRD (Alex Rivera) Video Call Avatar Component Styles
+   Theme: Professional Video Conference, Dark Navy & Electric Blue Accents
+   Enhanced with: Real-Time 3D Model Support (GLB) + 2D Fallback
+   ========================================================================== */
+
+:root {
+  --navy-950: #070a14;
+  --navy-900: #0b1120;
+  --navy-800: #111b33;
+  --accent-blue: #3b82f6;
+  --accent-blue-glow: rgba(59, 130, 246, 0.45);
+  --accent-purple: #8b5cf6;
+  --accent-purple-glow: rgba(139, 92, 246, 0.4);
+  --accent-green: #10b981;
+  --accent-green-glow: rgba(16, 185, 129, 0.4);
+  --glass-bg: rgba(15, 23, 42, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.09);
+}
+
+/* Master Stage */
+.ai-hrd-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Dynamic Ambient Spotlight behind the Avatar Card */
+.ai-hrd-stage::before {
+  content: '';
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-blue-glow) 0%, rgba(139, 92, 246, 0.15) 45%, transparent 70%);
+  filter: blur(60px);
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.65;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ai-hrd-stage.status-speaking::before {
+  opacity: 0.95;
+  transform: scale(1.15);
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.55) 0%, rgba(139, 92, 246, 0.4) 40%, transparent 70%);
+}
+
+.ai-hrd-stage.status-thinking::before {
+  opacity: 0.85;
+  transform: scale(1.05);
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, rgba(99, 102, 241, 0.35) 45%, transparent 70%);
+}
+
+.ai-hrd-stage.status-listening::before {
+  opacity: 0.8;
+  transform: scale(1.02);
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(6, 182, 212, 0.25) 45%, transparent 70%);
+}
+
+/* Video Card Frame */
+.hrd-video-card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 980px;
+  height: 100%;
+  max-height: calc(100vh - 180px);
+  aspect-ratio: 16 / 9;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #0b1120;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.hrd-video-card.card-speaking {
+  border-color: rgba(96, 165, 250, 0.5);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.7),
+              0 0 35px var(--accent-blue-glow),
+              0 0 70px var(--accent-purple-glow);
+}
+
+.hrd-video-card.card-thinking {
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.7),
+              0 0 30px var(--accent-purple-glow);
+}
+
+.hrd-video-card.card-listening {
+  border-color: rgba(52, 211, 153, 0.45);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.7),
+              0 0 25px var(--accent-green-glow);
+}
+
+/* 3D Canvas Stage Container (Transparan agar latar belakang kantor eksekutif terlihat) */
+.ai-hrd-3d-stage {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+/* Mode Toggle Button (3D Model / 2D Avatar) */
+.ai-mode-toggle-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(11, 18, 36, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(113, 87, 245, 0.35);
+  color: #e2e8f0;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.ai-mode-toggle-btn:hover {
+  background: rgba(113, 87, 245, 0.25);
+  border-color: #8b5cf6;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.ai-mode-toggle-btn.btn-3d-active {
+  background: linear-gradient(135deg, rgba(113, 87, 245, 0.35), rgba(59, 130, 246, 0.35));
+  border-color: #a78bfa;
+  color: #c084fc;
+}
+
+/* 2D Media Wrapper maintaining exact aspect ratio */
+.avatar-media-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* 2D Facial Puppet Stage */
+.avatar-puppet-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: flat;
+  will-change: transform;
+}
+
+/* High-Res Avatar Portrait */
+.hrd-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Vector SVG Overlays */
+.avatar-facial-svg-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.eyelid-vector-group {
+  will-change: transform, opacity;
+  transform-origin: center top;
+}
+
+.mouth-vector-group {
+  will-change: transform, opacity;
+  transform-origin: 499px 426px;
+}
+
+/* Vignette Layer */
+.avatar-vignette-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(7, 10, 20, 0.65) 100%),
+              linear-gradient(to top, rgba(7, 10, 20, 0.75) 0%, transparent 35%),
+              linear-gradient(to bottom, rgba(7, 10, 20, 0.6) 0%, transparent 25%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Concentric Audio Wave Rings - Disembunyikan agar tidak menutupi wajah Avatar */
+.soundwave-rings-container {
+  display: none;
+  pointer-events: none;
+}
+
+.soundwave-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(96, 165, 250, 0.6);
+  opacity: 0;
+  animation: rippleWave 2.4s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+}
+
+.soundwave-ring.ring-2 {
+  animation-delay: 0.8s;
+  border-color: rgba(139, 92, 246, 0.5);
+}
+
+.soundwave-ring.ring-3 {
+  animation-delay: 1.6s;
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+@keyframes rippleWave {
+  0% { transform: scale(0.65); opacity: 0.85; }
+  60% { opacity: 0.4; }
+  100% { transform: scale(1.85); opacity: 0; }
+}
+
+/* Badges & Overlays */
+.ai-status-badge {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  color: #f1f5f9;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.status-dot.dot-online {
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+}
+
+.status-dot.dot-speaking {
+  background: #3b82f6;
+  box-shadow: 0 0 10px #3b82f6;
+  animation: dotPulse 1.2s infinite;
+}
+
+.status-dot.dot-thinking {
+  background: #a855f7;
+  box-shadow: 0 0 10px #a855f7;
+  animation: dotPulse 1s infinite;
+}
+
+.status-dot.dot-listening {
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+  animation: dotPulse 1.4s infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.55; }
+}
+
+.mini-audio-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2.5px;
+  height: 12px;
+  margin-left: 2px;
+}
+
+.mini-bar {
+  width: 2.5px;
+  background: #60a5fa;
+  border-radius: 1px;
+  animation: barJump 1s ease-in-out infinite alternate;
+}
+
+.mini-bar:nth-child(1) { height: 40%; animation-delay: 0.1s; }
+.mini-bar:nth-child(2) { height: 90%; animation-delay: 0.3s; }
+.mini-bar:nth-child(3) { height: 60%; animation-delay: 0.2s; }
+.mini-bar:nth-child(4) { height: 100%; animation-delay: 0.4s; }
+
+@keyframes barJump {
+  0% { height: 25%; }
+  100% { height: 100%; }
+}
+
+.ai-name-card {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.ai-name-avatar-thumb {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1.5px solid rgba(59, 130, 246, 0.6);
+}
+
+.ai-name-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-name-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.ai-verified-icon {
+  color: #38bdf8;
+  display: inline-flex;
+}
+
+.ai-name-subtitle {
+  font-size: 0.74rem;
+  color: #94a3b8;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-company-pill {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .hrd-video-card {
+    border-radius: 14px;
+    max-height: 55vh;
+  }
+  .ai-status-badge {
+    top: 12px;
+    left: 12px;
+    font-size: 0.72rem;
+    padding: 4px 10px;
+  }
+  .ai-mode-toggle-btn {
+    top: 12px;
+    right: 12px;
+    padding: 4px 8px;
+    font-size: 0.68rem;
+  }
+  .ai-name-card {
+    bottom: 12px;
+    left: 12px;
+    padding: 8px 12px;
+  }
+  .ai-name-avatar-thumb {
+    width: 32px;
+    height: 32px;
+  }
+}
